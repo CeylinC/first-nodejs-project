@@ -1,0 +1,17 @@
+{
+  "name": "first-nodejs-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/CeylinC/first-nodejs-project.git",
+  "author": "Ceylin <caltepeceylin@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "scripts": {
+    "start": "nodemon app.js"
+  }
+}
