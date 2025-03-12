@@ -1,30 +1,37 @@
 const path = require('path')
 const express = require('express')
+const { engine } = require('express-handlebars')
 const app = express()
 const port = 3000
 const hostName = '127.0.0.1'
 
 app.use(express.static('public'))
 
+app.engine('handlebars', engine());
+app.set('view engine', 'handlebars');
 
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'web/index.html'))
+  res.render('site/index');
 })
 
 app.get('/about', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'web/about.html'))
+  res.render('site/about');
 })
 
 app.get('/blog', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'web/blog.html'))
-})
-
-app.get('/blog-single', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'web/blog-single.html'))
+  res.render('site/blog');
 })
 
 app.get('/contact', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'web/contact.html'))
+  res.render('site/contact');
+})
+
+app.get('/login', (req, res) => {
+  res.render('site/login');
+})
+
+app.get('/signup', (req, res) => {
+  res.render('site/signup');
 })
 
 
