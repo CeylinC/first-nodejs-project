@@ -1,38 +1,34 @@
 const path = require('path')
 const express = require('express')
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser')
+const fileUpload = require('express-fileupload')
 const { engine } = require('express-handlebars')
 const app = express()
 const port = 3000
 const hostName = '127.0.0.1'
+
+mongoose.connect('mongodb://127.0.0.1:27017/nodeblog_db', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+
+app.use(fileUpload())
 
 app.use(express.static('public'))
 
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 
-app.get('/', (req, res) => {
-  res.render('site/index');
-})
+app.use(bodyParser.urlencoded({ extended: false }))
 
-app.get('/about', (req, res) => {
-  res.render('site/about');
-})
+app.use(bodyParser.json())
 
-app.get('/blog', (req, res) => {
-  res.render('site/blog');
-})
+const main = require('./routes/main')
+app.use('/', main)
 
-app.get('/contact', (req, res) => {
-  res.render('site/contact');
-})
-
-app.get('/login', (req, res) => {
-  res.render('site/login');
-})
-
-app.get('/signup', (req, res) => {
-  res.render('site/signup');
-})
+const posts = require('./routes/posts')
+app.use('/posts', posts)
 
 
 app.listen(port, hostName, () => {
