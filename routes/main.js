@@ -12,7 +12,6 @@ router.get('/about', (req, res) => {
 
 router.get('/blog', (req, res) => {
   Post.find({}).lean().then((posts) => {
-    console.log(posts)
     res.render('site/blog', {posts: posts});
   })
 })

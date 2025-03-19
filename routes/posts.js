@@ -25,7 +25,12 @@ router.post('/test', async (req, res) => {
     ...req.body,
     post_image: `/img/postimages/${post_image.name}`
   }).then(() => {
-    res.redirect("/")
+    req.session.sessionFlash = {
+      type: 'alert alert-success',
+      message: 'Postunuz başarılı bir biçimde yüklendi'
+    }
+    console.log("geldi")
+    res.redirect("/blog")
   })
 })
 

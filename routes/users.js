@@ -9,7 +9,11 @@ router.get('/signup', (req, res) => {
 
 router.post('/signup', (req, res) => {
   User.create(req.body).then((user, error) => {
-    res.redirect("/")
+    req.session.sessionFlash = {
+      type: 'alert alert-success',
+      message: 'Kullanıcı Başarılı bir şekilde kayıt oldu.'
+    }
+    res.redirect("/users/login")
   })
 })
 
