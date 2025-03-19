@@ -43,6 +43,22 @@ app.set('view engine', 'handlebars');
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
+//Edit Links
+app.use((req, res, next) => {
+  const {userId} = req.session
+
+  if(userId) {
+    res.locals = {
+      displayLink: true
+    }
+  } else {
+    res.locals = {
+      displayLink: false
+    }
+  }
+  next()
+})
+
 const main = require('./routes/main')
 const users = require('./routes/users')
 const posts = require('./routes/posts')
