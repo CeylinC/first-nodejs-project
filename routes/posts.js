@@ -2,10 +2,14 @@ const express = require('express')
 const path = require('path')
 const router = express.Router()
 const Post = require('../models/Post')
+const Category = require('../models/Category')
+
 
 router.get('/new', (req, res) => {
   if(req.session.userId) {
-    return res.render('site/addpost');
+    Category.find({}).lean().then((categories) => {
+      return res.render('site/addpost', {categories: categories});
+    })
   } else {
     res.redirect("/users/login")
   }
@@ -13,7 +17,9 @@ router.get('/new', (req, res) => {
 
 router.get('/:id', async (req, res) => {
   await Post.findById(req.params.id).lean().then((post) => {
-    res.render('site/post', {post: post})
+    Category.find({}).lean().then((categories) => {
+      res.render('site/post', {post: post, categories: categories})
+    })
   })
 })
 

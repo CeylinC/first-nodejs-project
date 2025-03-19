@@ -1,4 +1,4 @@
-const path = require('path')
+const methodOverride = require('method-override')
 const express = require('express')
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
@@ -17,6 +17,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/nodeblog_db', {
 })
 
 app.use(fileUpload())
+app.use(methodOverride('_method'))
 app.use(expressSession({
   secret: "testio",
   resave: false,
@@ -62,10 +63,12 @@ app.use((req, res, next) => {
 const main = require('./routes/main')
 const users = require('./routes/users')
 const posts = require('./routes/posts')
+const admin = require('./routes/admin/index')
 
 app.use('/', main)
 app.use('/posts', posts)
 app.use('/users', users)
+app.use('/admin', admin)
 
 
 app.listen(port, hostName, () => {
