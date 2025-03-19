@@ -4,7 +4,11 @@ const router = express.Router()
 const Post = require('../models/Post')
 
 router.get('/new', (req, res) => {
-  res.render('site/addpost');
+  if(req.session.userId) {
+    return res.render('site/addpost');
+  } else {
+    res.redirect("/users/login")
+  }
 })
 
 router.get('/:id', async (req, res) => {

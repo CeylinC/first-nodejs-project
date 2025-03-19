@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
 const exhbs = require('express-handlebars')
+const expressSession = require('express-session')
+const MongoStore = require('connect-mongo');
 const dayFormat = require('./helpers/dayFormat');
 const app = express()
 const port = 3000
@@ -11,25 +13,35 @@ const hostName = '127.0.0.1'
 
 mongoose.connect('mongodb://127.0.0.1:27017/nodeblog_db', {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
 
 app.use(fileUpload())
-
+app.use(expressSession({
+  secret: "testio",
+  resave: false,
+  saveUninitialized: true,
+  store: MongoStore.create({
+    mongoUrl: 'mongodb://127.0.0.1:27017/nodeblog_db',
+    collectionName: 'sessions',
+    ttl: 14 * 24 * 60 * 60
+  })
+}))
 app.use(express.static('public'))
 
-app.engine('handlebars', exhbs.engine({helpers: {dayFormat: dayFormat}}));
+app.engine('handlebars', exhbs.engine({helpers: {dayFormat: dayFormat}}))
 app.set('view engine', 'handlebars');
 
-app.use(bodyParser.urlencoded({ extended: false }))
-
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 const main = require('./routes/main')
-app.use('/', main)
+const users = require('./routes/users')
+const posts = require('./routes/posts')
 
-const posts = require('./routes/posts');
+app.use('/', main)
 app.use('/posts', posts)
+app.use('/users', users)
 
 
 app.listen(port, hostName, () => {
