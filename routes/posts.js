@@ -3,7 +3,7 @@ const path = require('path')
 const router = express.Router()
 const Post = require('../models/Post')
 const Category = require('../models/Category')
-
+const User = require('../models/User')
 
 router.get('/new', (req, res) => {
   if(req.session.userId) {
@@ -16,7 +16,7 @@ router.get('/new', (req, res) => {
 })
 
 router.get('/:id', async (req, res) => {
-  await Post.findById(req.params.id).lean().then((post) => {
+  await Post.findById(req.params.id).populate({path: 'author', model: User}).lean().then((post) => {
     Category.find({}).lean().then((categories) => {
       res.render('site/post', {post: post, categories: categories})
     })
@@ -29,7 +29,8 @@ router.post('/test', async (req, res) => {
 
   await Post.create({
     ...req.body,
-    post_image: `/img/postimages/${post_image.name}`
+    post_image: `/img/postimages/${post_image.name}`,
+    author: req.session.userId
   }).then(() => {
     req.session.sessionFlash = {
       type: 'alert alert-success',
