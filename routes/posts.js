@@ -17,6 +17,43 @@ router.get("/new", (req, res) => {
   }
 });
 
+router.get("/search", (req, res) => {
+  function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$#\s]/g, "\\$&");
+  }
+
+  if (req.query.look) {
+    const regex = new RegExp(escapeRegex(req.query.look), "gi");
+    Post.find({ title: regex })
+      .populate({ path: "author", model: User })
+      .sort({ $natural: -1 })
+      .lean()
+      .then((post) => {
+        Category.aggregate([
+          {
+            $lookup: {
+              from: "posts",
+              localField: "_id",
+              foreignField: "category",
+              as: "posts",
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              num_of_posts: {
+                $size: "$posts",
+              },
+            },
+          },
+        ]).then((categories) => {
+          res.render("site/blog", { posts: post, categories: categories });
+        });
+      });
+  }
+});
+
 router.get("/category/:categoryId", async (req, res) => {
   await Post.find({})
     .populate({ path: "author", model: User })
