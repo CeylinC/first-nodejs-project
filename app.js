@@ -3,7 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
-const exhbs = require('express-handlebars')
+const exphbs = require('express-handlebars')
 const expressSession = require('express-session')
 const MongoStore = require('connect-mongo');
 const dayFormat = require('./helpers/dayFormat');
@@ -38,7 +38,13 @@ app.use((req, res, next) => {
 
 app.use(express.static('public'))
 
-app.engine('handlebars', exhbs.engine({helpers: {dayFormat: dayFormat}}))
+const hbs = exphbs.create({
+  helpers: {
+    dayFormat: dayFormat
+  }
+});
+
+app.engine('handlebars', hbs.engine)
 app.set('view engine', 'handlebars');
 
 app.use(bodyParser.urlencoded({ extended: true }))
