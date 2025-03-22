@@ -1,3 +1,4 @@
+require('dotenv').config();
 const methodOverride = require('method-override')
 const express = require('express')
 const mongoose = require('mongoose');
@@ -67,10 +68,12 @@ app.use((req, res, next) => {
 const main = require('./routes/main')
 const users = require('./routes/users')
 const posts = require('./routes/posts')
+const contacts = require('./routes/contact')
 const admin = require('./routes/admin/index')
 
 app.use('/', main)
 app.use('/posts', posts)
+app.use('/contact', contacts)
 app.use('/users', users)
 app.use('/admin', admin)
 

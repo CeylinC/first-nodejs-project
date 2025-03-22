@@ -59,12 +59,6 @@ router.get("/blog", (req, res) => {
       );
     });
   })
-
-  
-});
-
-router.get("/contact", (req, res) => {
-  res.render("site/contact");
 });
 
 module.exports = router;
