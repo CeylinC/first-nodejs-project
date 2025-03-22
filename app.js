@@ -6,7 +6,7 @@ const fileUpload = require('express-fileupload')
 const exphbs = require('express-handlebars')
 const expressSession = require('express-session')
 const MongoStore = require('connect-mongo');
-const dayFormat = require('./helpers/dayFormat');
+const helpers = require('./helpers/hbs');
 const app = express()
 const port = 3000
 const hostName = '127.0.0.1'
@@ -32,9 +32,7 @@ app.use(expressSession({
 app.use(express.static('public'))
 
 const hbs = exphbs.create({
-  helpers: {
-    dayFormat: dayFormat
-  }
+  helpers: helpers
 });
 
 app.engine('handlebars', hbs.engine)
