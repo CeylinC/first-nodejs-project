@@ -17,6 +17,48 @@ router.get("/new", (req, res) => {
   }
 });
 
+router.get("/category/:categoryId", async (req, res) => {
+  await Post.find({})
+    .populate({ path: "author", model: User })
+    .sort({ $natural: -1 })
+    .limit(3)
+    .lean()
+    .then((lastestPosts) => {
+      Post.find({ category: req.params.categoryId })
+        .populate({ path: "author", model: User })
+        .populate({ path: "category", model: Category })
+        .lean()
+        .then((posts) => {
+          Category.aggregate([
+            {
+              $lookup: {
+                from: "posts",
+                localField: "_id",
+                foreignField: "category",
+                as: "posts",
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                name: 1,
+                num_of_posts: {
+                  $size: "$posts",
+                },
+              },
+            },
+          ]).then((categories) => {
+            res.render("site/blog", {
+              posts: posts,
+              categories: categories,
+              lastestPosts,
+              lastestPosts,
+            });
+          });
+        });
+    });
+});
+
 router.get("/:id", async (req, res) => {
   await Post.find({})
     .populate({ path: "author", model: User })
@@ -28,11 +70,31 @@ router.get("/:id", async (req, res) => {
         .populate({ path: "author", model: User })
         .lean()
         .then((post) => {
-          Category.find({})
-            .lean()
-            .then((categories) => {
-              res.render("site/post", { post: post, categories: categories, lastestPosts: lastestPosts });
+          Category.aggregate([
+            {
+              $lookup: {
+                from: "posts",
+                localField: "_id",
+                foreignField: "category",
+                as: "posts",
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                name: 1,
+                num_of_posts: {
+                  $size: "$posts",
+                },
+              },
+            },
+          ]).then((categories) => {
+            res.render("site/post", {
+              post: post,
+              categories: categories,
+              lastestPosts: lastestPosts,
             });
+          });
         });
     });
 });
